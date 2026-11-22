@@ -1,6 +1,6 @@
 package txtab
 
-// Runs the shared corpus (texttables/fixtures, plan/02-fixtures.md). The manifest is read from fixtures.json, the
+// Runs the shared corpus (texttables/fixtures, fixtures/README.md). The manifest is read from fixtures.json, the
 // JSON mirror of fixtures.yaml, so the tests need no YAML library. The corpus is found at $TXTAB_FIXTURES, else
 // ../texttables/fixtures next to this repository.
 
