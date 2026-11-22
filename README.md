@@ -39,9 +39,11 @@ Without the file system:
 
 ```go
 doc := txtab.Parse(data)                                  // *Doc: Recognized, OK, Error, Diagnostics, Tables, …
-lines, warnings := txtab.ApplySQL(doc, "postgres-17", false, "") // pre-data, then post-data, in file order
+a := txtab.ApplySQL(doc, "postgres-17", false, "", nil)       // a.Statements: pre-data, then post-data, in file order
 text, err := txtab.DescribeCSV(csvText, "orders.csv")     // plain CSV → a .txtab that describes it
 ```
+
+`ApplySQL` takes a `Source` for `sql-* <dialect> reference=<file>.sql` lines; `Load` passes its own as `f.Source`. A script that cannot be read is skipped with a `sql-reference-not-found` warning, and `Load` reports the same warning in `f.Diagnostics()`.
 
 Values stay strings as written (after CSV unquoting). Nulls are empty fields or the table's `null=` marker: `table.IsNull(v)`. The parser never converts types or substitutes `default=`, as the spec requires.
 

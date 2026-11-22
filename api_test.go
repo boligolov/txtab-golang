@@ -39,9 +39,9 @@ func TestParseOrders(t *testing.T) {
 
 func TestApplySQL(t *testing.T) {
 	doc := Parse([]byte(orders))
-	lines, warnings := ApplySQL(doc, "mysql", false, "")
-	if len(lines) != 1 || lines[0].Token != "mysql-8.4" || len(warnings) != 1 || warnings[0].Code != "sql-dialect-family" {
-		t.Errorf("lines=%v warnings=%v", lines, warnings)
+	a := ApplySQL(doc, "mysql", false, "", nil)
+	if lines := a.Lines(); len(lines) != 1 || lines[0].Token != "mysql-8.4" || len(a.Warnings) != 1 || a.Warnings[0].Code != "sql-dialect-family" {
+		t.Errorf("lines=%v warnings=%v", a.Lines(), a.Warnings)
 	}
 }
 

@@ -58,7 +58,7 @@ func init() {
 	// sql
 	reg(Fail, "-", "sql-dialect-missing")
 	reg(Warn, "-", "sql-unknown-dialect", "sql-dialect-family", "sql-version-mismatch", "sql-no-match")
-	reg(Warn, "never", "ddl-column-mismatch")
+	reg(Warn, "never", "ddl-column-mismatch", "sql-reference-not-found")
 	// notes and links
 	reg(Fail, "-", "note-malformed", "note-missing-text", "note-row-and-key", "link-malformed", "link-missing-href", "link-missing-address", "link-row-and-key")
 	reg(Warn, "never", "note-unresolved", "link-unresolved", "link-unsafe-scheme")

@@ -27,6 +27,10 @@ type Loaded struct {
 	Doc     *Doc
 	Archive *ArchiveResult
 	Opened  map[int]*OpenResult
+	// Source reads reference= files: the folder of the file, or the archive.
+	Source Source
+	// SQLDiagnostics: sql-reference-not-found for missing reference= scripts.
+	SQLDiagnostics []Diagnostic
 }
 
 // Diagnostics returns the parse diagnostics followed by those found opening external data.
@@ -45,7 +49,7 @@ func (l *Loaded) Diagnostics() []Diagnostic {
 			}
 		}
 	}
-	return out
+	return append(out, l.SQLDiagnostics...)
 }
 
 // Gap names a spec-allowed feature this implementation lacks, needed by the file ("" if none).
@@ -97,12 +101,14 @@ func Load(path string, openData bool) (*Loaded, error) {
 	} else {
 		l.Doc = Parse(data)
 	}
+	l.Source = src
 	if openData && l.Doc.OK && src != nil {
 		for _, t := range l.Doc.Tables {
 			if t.Reference != "" && l.Opened[t.Index] == nil {
 				l.Opened[t.Index] = OpenTable(t, src)
 			}
 		}
+		l.SQLDiagnostics = CheckSQLReferences(l.Doc, src)
 	}
 	return l, nil
 }

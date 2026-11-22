@@ -154,12 +154,12 @@ func sql(args []string) int {
 		fmt.Fprintf(os.Stderr, "%s: %v\n", fs.Arg(1), f.Doc.Error)
 		return 1
 	}
-	lines, warnings := txtab.ApplySQL(f.Doc, fs.Arg(0), *strict, *section)
-	for _, w := range warnings {
+	applied := txtab.ApplySQL(f.Doc, fs.Arg(0), *strict, *section, f.Source)
+	for _, w := range applied.Warnings {
 		fmt.Fprintf(os.Stderr, "%s: %s\n", fs.Arg(1), w)
 	}
-	for _, l := range lines {
-		s := strings.TrimRight(l.Statement, " ")
+	for _, st := range applied.Statements {
+		s := strings.TrimRight(st.Text, " \t\r\n")
 		if !strings.HasSuffix(s, ";") {
 			s += ";"
 		}

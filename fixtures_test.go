@@ -329,16 +329,20 @@ func checkFixture(t *testing.T, root, id string, e map[string]any) string {
 		}
 	}
 	if ap, ok := x["apply"].(map[string]any); ok {
-		lines, warnings := ApplySQL(doc, ap["target"].(string), false, "")
+		a := ApplySQL(doc, ap["target"].(string), false, "", src)
 		if w, ok := ap["order"]; ok {
-			var got []int
-			for _, l := range lines {
+			got := []int{}
+			for _, l := range a.Lines() {
 				got = append(got, l.Line)
 			}
 			eq("apply.order", got, w)
 		}
 		if w, ok := ap["warnings"]; ok {
-			eq("apply.warnings", sortedCodes(warnings, Warn), sortedAny(w))
+			eq("apply.warnings", sortedCodes(a.Warnings, Warn), sortedAny(w))
+		}
+		if w, ok := ap["references"]; ok {
+			refs := append([]string{}, a.References...)
+			eq("apply.references", refs, w)
 		}
 	}
 	if op, ok := x["open"].(map[string]any); ok {

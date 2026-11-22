@@ -866,7 +866,23 @@ func (p *parser) directive(kw, payload string, ln int, t *Table) {
 		if !known {
 			p.warn("sql-unknown-dialect", ln, ti, "unknown SQL dialect %s", token)
 		}
-		line := &SQLLine{ln, kw[4:], token, dialect, version, known, statement, ti}
+		reference := ""
+		// sql.md#external-scripts-reference: a single reference=<path> token instead of a statement
+		if strings.HasPrefix(statement, "reference=") {
+			pairs, err := tokenizeKV(statement)
+			if err == "" && len(pairs) != 1 {
+				err = "reference= must be the only token after the dialect"
+			}
+			if err != "" {
+				failf("kv-malformed", ln, ti, "%s", err)
+			}
+			reference = pairs[0].Value
+			if reference == "" || ReferenceEscapes(reference) {
+				failf("reference-escapes-dir", ln, ti, "reference=%s", reference)
+			}
+			statement = ""
+		}
+		line := &SQLLine{ln, kw[4:], token, dialect, version, known, statement, reference, ti}
 		doc.SQL = append(doc.SQL, line)
 		if t != nil {
 			t.SQL = append(t.SQL, line)

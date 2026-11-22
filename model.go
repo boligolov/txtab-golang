@@ -67,8 +67,9 @@ type SQLLine struct {
 	Dialect   string
 	Version   string // "" when unversioned
 	Known     bool
-	Statement string
-	Table     int // -1 for the file block
+	Statement string // "" when the line names a script with reference=
+	Reference string // the .sql file named by reference=, "" for an inline statement
+	Table     int    // -1 for the file block
 }
 
 // TableData holds raw field values after CSV unquoting.
